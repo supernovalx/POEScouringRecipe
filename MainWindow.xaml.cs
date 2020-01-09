@@ -173,7 +173,24 @@ namespace POEScouringRecipe
         private void HighLight(int x, int y)
         {
             Rectangle r = new Rectangle();
-            r.Stroke = new SolidColorBrush(Colors.Yellow);
+            bool xOdd = x % 2 != 0;
+            bool yOdd = y % 2 != 0;
+            Color c;
+            if (xOdd)
+            {
+                if (yOdd)
+                    c = Colors.Yellow;
+                else
+                    c = Colors.LimeGreen;
+            }
+            else
+            {
+                if (yOdd)
+                    c = Colors.LimeGreen;
+                else
+                    c = Colors.Yellow;
+            }
+            r.Stroke = new SolidColorBrush(c);
             r.StrokeThickness = 4;
             r.Tag = new Point(x, y);
             gridInventory.Children.Add(r);
