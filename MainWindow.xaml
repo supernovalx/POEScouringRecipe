@@ -1,0 +1,65 @@
+﻿<Window x:Class="POEScouringRecipe.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:POEScouringRecipe"
+        mc:Ignorable="d"
+        Title="ExpenseIt" Height="350" Width="500" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Topmost="True" MouseDown="Window_MouseDown" ResizeMode="CanResizeWithGrip" SourceInitialized="Window_SourceInitialized" Closing="Window_Closing">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="2*" MaxHeight="100px"></RowDefinition>
+			<RowDefinition MaxHeight="50px"></RowDefinition>
+			<RowDefinition Height="8*"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+		<Grid IsHitTestVisible="True" Name="gridControl">
+			<Grid.RowDefinitions>
+				<RowDefinition></RowDefinition>
+				<RowDefinition ></RowDefinition>
+			</Grid.RowDefinitions>
+			<Grid.Background>
+				<SolidColorBrush Color="White" Opacity="0.3"></SolidColorBrush>
+			</Grid.Background>
+			<Grid.Resources>
+				<Style x:Key="style" TargetType="{x:Type Control}">
+					<Setter Property="Margin" Value="5,3,0,0" />
+					<Setter Property="MaxHeight" Value="50px"></Setter>
+					<Setter Property="MinWidth" Value="30px"></Setter>
+					<Setter Property="FontSize" Value="15"></Setter>
+					<Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+					<Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+				</Style>
+			</Grid.Resources>
+			<!--Main controls-->
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="9*"></ColumnDefinition>
+					<ColumnDefinition ></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<StackPanel Orientation="Horizontal">
+					<Button Style="{StaticResource style}" Name="btnIdentify" Click="btnIdentify_Click">Identify</Button>
+					<Button Style="{StaticResource style}" Name="btnTransmute" Click="btnTransmute_Click">Transmute</Button>
+					<Button Style="{StaticResource style}" Name="btnSell" Click="btnSell_Click">Sell</Button>
+					<Button Style="{StaticResource style}" Name="btnRegal" Click="btnRegal_Click">Regal</Button>
+					<Button Style="{StaticResource style}" Name="btnGridLine" Click="btnGridLine_Click">Grid line</Button>
+					<Button Style="{StaticResource style}" Name="btnDragable" Click="btnDragable_Click">Dragable</Button>
+					<TextBox Style="{StaticResource style}" x:Name="tbSSID" TextChanged="tbSSID_TextChanged" MaxWidth="100px"></TextBox>
+					<Button Style="{StaticResource style}" Name="btnFetch" Click="btnFetch_Click">Fetch</Button>
+				</StackPanel>
+				<Button Grid.Column="1" Width="50px" Height="30px" VerticalAlignment="Top" HorizontalAlignment="Right" Background="IndianRed" FontWeight="Bold" Name="btnExit" Click="btnExit_Click">X</Button>
+
+			</Grid>
+
+			<!--Stash tabs-->
+			<StackPanel Name="panelStashTab" Grid.Row="1" Orientation="Horizontal">
+			</StackPanel>
+		</Grid>
+
+		<!--Inventory grid-->
+		<Grid Grid.Row="2" Name="gridInventory" IsHitTestVisible="False">
+		</Grid>
+
+		<TextBlock Grid.Row="3" VerticalAlignment="Center" Foreground="White" Margin="10px,0,0,0" Name="tbStatus" FontWeight="Bold" FontSize="18"></TextBlock>
+	</Grid>
+</Window>
