@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Gma.System.MouseKeyHook;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,7 @@ namespace POEScouringRecipe
         private List<Tab> tabs = new List<Tab>();
         private Stash curStash = new Stash();
         private Random rd = new Random();
+        private IKeyboardMouseEvents m_GlobalHook;
         public MainWindow()
         {
             InitializeComponent();
@@ -37,12 +39,32 @@ namespace POEScouringRecipe
                 gridInventory.ColumnDefinitions.Add(new ColumnDefinition());
             }
             tbSSID.Text = Properties.Settings.Default.ssid;
+
+            // Mouse hook
+            m_GlobalHook = Hook.GlobalEvents();
+            m_GlobalHook.MouseClick += M_GlobalHook_MouseClick;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void M_GlobalHook_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            MessageBox.Show("a");
+            Point p = gridInventory.PointToScreen(new Point(0d, 0d));
 
+            int x = (e.X - (int)p.X) / (int)(gridInventory.ActualWidth / 12);
+            int y = (e.Y - (int)p.Y) / (int)(gridInventory.ActualHeight / 12);
+
+            if (x < 0 || x > 12 || y < 0 || y > 12)
+                return;
+
+            foreach (FrameworkElement c in gridInventory.Children)
+            {
+                Point point = (Point)c.Tag;
+                if (point.Y == y && point.X == x)
+                {
+                    gridInventory.Children.Remove(c);
+                    break;
+                }
+
+            }
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -78,7 +100,7 @@ namespace POEScouringRecipe
             tabs = s.tabs;
 
             panelStashTab.Children.Clear();
-            foreach(Tab t in tabs)
+            foreach (Tab t in tabs)
             {
                 Button b = new Button();
                 b.Click += StashTab_Click;
@@ -96,7 +118,7 @@ namespace POEScouringRecipe
         {
             curStash = GetStash(int.Parse((e.Source as Button).DataContext.ToString()));
 
-            foreach(Control c in panelStashTab.Children)
+            foreach (Control c in panelStashTab.Children)
             {
                 c.FontWeight = FontWeights.Normal;
             }
@@ -110,7 +132,7 @@ namespace POEScouringRecipe
             rq.CookieContainer = new CookieContainer();
             rq.CookieContainer.Add(new Cookie("POESESSID", tbSSID.Text, "/", "pathofexile.com"));
 
-            HttpWebResponse resp = (HttpWebResponse)rq.GetResponse();
+            WebResponse resp =  rq.GetResponse();
             Stream receiveStream = resp.GetResponseStream();
             StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
             string cont = readStream.ReadToEnd();
@@ -141,13 +163,19 @@ namespace POEScouringRecipe
             Properties.Settings.Default.w = this.Width;
 
             Properties.Settings.Default.Save();
+
+            m_GlobalHook.MouseClick -= M_GlobalHook_MouseClick;
+
+            //It is recommened to dispose it
+            m_GlobalHook.Dispose();
         }
 
-        private void HighLight(int x,int y)
+        private void HighLight(int x, int y)
         {
             Rectangle r = new Rectangle();
             r.Stroke = new SolidColorBrush(Colors.Yellow);
-            r.StrokeThickness = 2;
+            r.StrokeThickness = 4;
+            r.Tag = new Point(x, y);
             gridInventory.Children.Add(r);
             Grid.SetRow(r, y);
             Grid.SetColumn(r, x);
@@ -200,7 +228,7 @@ namespace POEScouringRecipe
             bool hasSuffix = it.typeLine.Contains("of");
 
             string[] s = it.typeLine.Split(' ');
-            
+
             bool hasPrefix = s[1] != (isRing ? "Ring" : "Amulet");
 
             return hasPrefix ^ hasSuffix;
@@ -227,7 +255,7 @@ namespace POEScouringRecipe
             ClearAllHighlight();
             foreach (Item i in curStash.items)
             {
-                if (i.name!="")
+                if (i.name != "")
                 {
                     HighLight(i.x, i.y);
                     count++;
